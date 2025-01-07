@@ -40,7 +40,7 @@ class SpeedTestServer:
         self.tcp_socket.listen(100)
 
         print(f"\033[92mServer started, listening on IP address {
-              self.server_ip}\033[0m")
+              self.server_ip}. TCP port: {self.tcp_port} UDP port: {self.udp_port}\033[0m")
 
     def start(self):
         # Start the offer broadcast thread

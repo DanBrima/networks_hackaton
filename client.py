@@ -109,7 +109,8 @@ class SpeedTestClient:
                     continue
 
                 server_ip = addr[0]
-                print(f"\033[93mReceived offer from {server_ip}\033[0m")
+                print(f"\033[93mReceived offer from {
+                      server_ip}:{addr[1]}\033[0m")
 
                 return server_ip, udp_port, tcp_port
 
