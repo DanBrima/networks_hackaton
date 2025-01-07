@@ -159,7 +159,7 @@ class SpeedTestClient:
             print("\033[94mStarting UDP transfer...\033[0m")
             # Create UDP socket
             sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            sock.settimeout(1)  # 1 second timeout
+            sock.settimeout(5)  # 5 second timeout
 
             # Send request
             request = struct.pack(self.REQUEST_MESSAGE_FORMAT,
@@ -173,6 +173,7 @@ class SpeedTestClient:
             start_time = datetime.now()
             received_segments = set()
             total_segments = None
+            last_segment_received = None
 
             while True:
                 try:
@@ -181,7 +182,7 @@ class SpeedTestClient:
                     # Unpack header
                     header_size = struct.calcsize(self.PAYLOAD_MESSAGE_FORMAT)
                     header = data[:header_size]
-                    magic_cookie, msg_type, total_segs, current_seg = struct.unpack(
+                    magic_cookie, msg_type, total_segments, current_seg = struct.unpack(
                         self.PAYLOAD_MESSAGE_FORMAT, header)
 
                     if magic_cookie != self.MAGIC_COOKIE:
@@ -194,17 +195,15 @@ class SpeedTestClient:
                             "\033[91mInvalid message type, ignoring request\033[0m")
                         continue
 
-                    total_segments = total_segs
                     received_segments.add(current_seg)
-# quesrions:
-#     data formatting - should use palyload on both?
-#     UDP timeout is not fair
+                    last_segment_received = datetime.now()
+
                 except socket.timeout:
-                    print("\033[93mUDP connection Timeout...\033[0m")
+                    print(f"UDP transfer {
+                          transfer_num} timed out, closing connection")
                     break
 
-            end_time = datetime.now()
-            duration = (end_time - start_time).total_seconds()
+            duration = (last_segment_received - start_time).total_seconds()
             speed = (file_size * 8) / duration  # bits per second
 
             if total_segments:
