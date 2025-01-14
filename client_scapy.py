@@ -15,7 +15,7 @@ OFFER_MESSAGE_TYPE = 0x2
 REQUEST_MESSAGE_TYPE = 0x3
 PAYLOAD_MESSAGE_TYPE = 0x4
 
-# Define custom packet formats
+# Define custom packet formats 
 
 
 class OfferPacket(Packet):
@@ -173,7 +173,7 @@ class SpeedTestClient:
             received = 0
 
             while received < file_size:
-                chunk = sock.recv(8192)  # 8KB chunks
+                chunk = sock.recv(8192)  # 8 KB chunks
 
                 if not chunk:
                     break
@@ -232,7 +232,7 @@ class SpeedTestClient:
                     except:
                         pass
 
-            # Sniff packets until timeout
+            # Sniff the packets until timeout
             while True:
                 sniff(
                     filter=f"udp and port {request[UDP].sport}",
