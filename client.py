@@ -18,33 +18,35 @@ class SpeedTestClient:
     OFFER_MESSAGE_FORMAT = '!IbHH'
     REQUEST_MESSAGE_FORMAT = '!IbQ'
     PAYLOAD_MESSAGE_FORMAT = '!IbQQ'
+    BROADCAST_PORT = 13117
 
     def __init__(self):
         # Create UDP socket for receiving offers
         self.udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-        self.udp_socket.bind(('', 13117))
+        self.udp_socket.bind(('', self.BROADCAST_PORT))
 
         print("\033[92mClient started, listening for offer requests...\033[0m")
 
     def start(self):
-        while True:
+        is_input_valid = False
+
+        while not is_input_valid:
             # Get user input for test parameters
-            try:
-                file_size = int(
-                    input("\033[96mEnter file size (in bytes): \033[0m"))
-                tcp_connections = int(
-                    input("\033[96mEnter number of TCP connections: \033[0m"))
-                udp_connections = int(
-                    input("\033[96mEnter number of UDP connections: \033[0m"))
+            file_size = int(
+                input("\033[96mEnter file size (in bytes): \033[0m"))
+            tcp_connections = int(
+                input("\033[96mEnter number of TCP connections: \033[0m"))
+            udp_connections = int(
+                input("\033[96mEnter number of UDP connections: \033[0m"))
 
-                if file_size <= 0 or tcp_connections < 0 or udp_connections < 0:
-                    raise ValueError("Values must be positive")
+            is_input_valid = file_size > 0 or tcp_connections >= 0 or udp_connections >= 0
 
-            except ValueError as e:
-                print(f"\033[91mInvalid input: {e}. Please try again.\033[0m")
-                continue
+            if not is_input_valid:
+                print(
+                    "\033[91mInvalid input: All values must be positive integers. Please try again.\033[0m")
 
+        while True:
             self._run_speed_test(file_size, tcp_connections, udp_connections)
 
     def _run_speed_test(self, file_size, tcp_connections, udp_connections):

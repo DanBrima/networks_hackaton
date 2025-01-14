@@ -19,6 +19,7 @@ class SpeedTestServer:
     OFFER_MESSAGE_FORMAT = '!IbHH'
     REQUEST_MESSAGE_FORMAT = '!IbQ'
     PAYLOAD_MESSAGE_FORMAT = '!IbQQ'
+    BROADCAST_PORT = 13117
 
     def __init__(self):
         # Initialize server sockets
@@ -78,7 +79,8 @@ class SpeedTestServer:
                                             )
 
                 # Broadcast the offer
-                broadcast_socket.sendto(offer_message, ('<broadcast>', 13117))
+                broadcast_socket.sendto(
+                    offer_message, ('<broadcast>', self.BROADCAST_PORT))
                 print(f"\033[96mOffer sent to broadcast address\033[0m")
                 time.sleep(1)
 
